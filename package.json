@@ -28,6 +28,9 @@
   },
   "dependencies": {
     "@adobe/adobe-client-data-layer": "^3.0.1",
-    "@adobe/aio-cli": "^10.3.3"
+    "@adobe/aio-cli": "^10.3.3",
+    "ajv": "^8.17.1",
+    "axios": "^1.11.0",
+    "dotenv": "^17.2.2"
   }
 }
