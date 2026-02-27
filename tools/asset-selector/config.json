@@ -1,0 +1,12 @@
+{
+  "aemTierType": ["delivery"],
+  "repoNames": [
+    "delivery-p88906-e783463.adobeaemcloud.com"
+  ],
+  "copyMode": [
+    {
+      "mimeType": "image/*",
+      "value": "reference"
+    }
+  ]
+}
