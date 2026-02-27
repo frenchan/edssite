@@ -33,7 +33,6 @@ export function createTabs($block) {
   const $container = $wrapper.parentElement;
   const $sections = document.querySelectorAll('[data-tab]');
 
-
   // move the tab's sections before the tab riders.
   [...$sections].forEach(($tabContent) => {
     const name = $tabContent.dataset.tab.toLowerCase().trim();
