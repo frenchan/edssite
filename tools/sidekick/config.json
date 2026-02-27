@@ -15,10 +15,8 @@
     },
     {
       "id": "asset-library",
-      "titleI18n":{ 
-        "en": "AEM Asset Library"
-      },
-      "environments": ["dev", "edit"],
+      "title": "My Assets",
+      "environments": ["edit"],
       "url": "https://experience.adobe.com/solutions/CQ-helix-assets-addon/static-assets/resources/asset-selector.html",
       "isPalette": true,
       "includePaths": ["**.docx**"],
