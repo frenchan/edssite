@@ -129,9 +129,9 @@ function loadDelayed() {
 }
 
 async function loadPage() {
+  await assetsInit();
   await loadEager(document);
   await loadLazy(document);
-  await assetsInit();
   loadDelayed();
 
   const main = document.querySelector('main');
