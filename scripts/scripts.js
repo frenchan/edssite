@@ -61,16 +61,16 @@ function buildAutoBlocks(main) {
  */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
+  // Let the plugin convert DM URLs into <picture>/<img> before other decorations
+  if (window.hlx.aemassets?.decorateExternalImages) {
+    window.hlx.aemassets.decorateExternalImages(main);
+  }
   // hopefully forward compatible button decoration
   decorateButtons(main);
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
-  // Let the plugin convert DM URLs into <picture>/<img> before other decorations
-  if (window.hlx.aemassets?.decorateExternalImages) {
-    window.hlx.aemassets.decorateExternalImages(main);
-  }
 }
 
 /**
