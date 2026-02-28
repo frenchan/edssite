@@ -1,7 +1,7 @@
 /* scripts/aem-assets-plugin-support.js */
 
 // Base path of the aem-assets-plugin code in your repo
-const codeBasePath = `${window.hlx?.codeBasePath}/plugins/aem-assets-plugin`;
+const codeBasePath = `${window.hlx?.codeBasePath}`;
 
 // Blocks you want the plugin to manage (can stay empty or add 'video', etc.)
 const blocks = [];
