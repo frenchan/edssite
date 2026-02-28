@@ -27,7 +27,7 @@ export default async function assetsInit() {
     createOptimizedPictureForDM,
     smartCrops: {
       Small: { minWidth: 0, maxWidth: 767 },
-      Medium:{ minWidth: 768, maxWidth: 1023 },
+      Medium: { minWidth: 768, maxWidth: 1023 },
       Large: { minWidth: 1024, maxWidth: 9999 },
     },
     // Tell the plugin which external URLs to treat as DM images
