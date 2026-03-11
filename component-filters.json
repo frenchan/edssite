@@ -1,5 +1,4 @@
-{
-  "filters": [
+[
     {
       "id": "section",
       "components": [
@@ -61,5 +60,5 @@
         "form"
       ]
     }
-  ]
-}
+]
+

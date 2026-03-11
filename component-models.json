@@ -1,301 +1,317 @@
-{
-  "groups": [
-    {
-      "title": "Content Blocks",
-      "id": "content-blocks",
-      "models": [
-        {
-          "id": "hero",
-          "fields": [
-            {
-              "component": "reference",
-              "valueType": "string",
-              "name": "image",
-              "label": "Background Image",
-              "multi": false
-            },
-            {
-              "component": "text",
-              "valueType": "string",
-              "name": "imageAlt",
-              "label": "Image Alt Text"
-            },
-            {
-              "component": "richtext",
-              "name": "text",
-              "label": "Heading Text",
-              "valueType": "string"
-            }
-          ]
-        },
-        {
-          "id": "cards",
-          "fields": [
-            {
-              "component": "reference",
-              "valueType": "string",
-              "name": "image",
-              "label": "Card Image",
-              "multi": false
-            },
-            {
-              "component": "text",
-              "valueType": "string",
-              "name": "imageAlt",
-              "label": "Image Alt Text"
-            },
-            {
-              "component": "richtext",
-              "name": "text",
-              "label": "Card Body",
-              "valueType": "string"
-            }
-          ]
-        },
-        {
-          "id": "columns",
-          "fields": [
-            {
-              "component": "richtext",
-              "name": "column1",
-              "label": "Column 1",
-              "valueType": "string"
-            },
-            {
-              "component": "richtext",
-              "name": "column2",
-              "label": "Column 2",
-              "valueType": "string"
-            }
-          ]
-        },
-        {
-          "id": "carousel",
-          "fields": [
-            {
-              "component": "reference",
-              "valueType": "string",
-              "name": "image",
-              "label": "Slide Image",
-              "multi": false
-            },
-            {
-              "component": "text",
-              "valueType": "string",
-              "name": "imageAlt",
-              "label": "Image Alt Text"
-            },
-            {
-              "component": "richtext",
-              "name": "text",
-              "label": "Slide Text",
-              "valueType": "string"
-            }
-          ]
-        },
-        {
-          "id": "tabs",
-          "fields": [
-            {
-              "component": "text",
-              "name": "label",
-              "label": "Tab Label",
-              "valueType": "string"
-            }
-          ]
-        },
-        {
-          "id": "teaser",
-          "fields": [
-            {
-              "component": "reference",
-              "valueType": "string",
-              "name": "image",
-              "label": "Teaser Image",
-              "multi": false
-            },
-            {
-              "component": "text",
-              "valueType": "string",
-              "name": "imageAlt",
-              "label": "Image Alt Text"
-            },
-            {
-              "component": "richtext",
-              "name": "text",
-              "label": "Teaser Text",
-              "valueType": "string"
-            }
-          ]
-        },
-        {
-          "id": "blockquote",
-          "fields": [
-            {
-              "component": "richtext",
-              "name": "quote",
-              "label": "Quote Text",
-              "valueType": "string"
-            },
-            {
-              "component": "text",
-              "name": "author",
-              "label": "Author Name",
-              "valueType": "string"
-            }
-          ]
-        },
-        {
-          "id": "activity-details",
-          "fields": [
-            {
-              "component": "text",
-              "name": "label",
-              "label": "Label",
-              "valueType": "string"
-            },
-            {
-              "component": "text",
-              "name": "value",
-              "label": "Value",
-              "valueType": "string"
-            }
-          ]
-        },
-        {
-          "id": "featured-article",
-          "fields": [
-            {
-              "component": "aem-content",
-              "name": "reference",
-              "label": "Article Page",
-              "valueType": "string"
-            }
-          ]
-        },
-        {
-          "id": "fragment",
-          "fields": [
-            {
-              "component": "aem-content",
-              "name": "reference",
-              "label": "Fragment Path",
-              "valueType": "string"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "title": "Default Content",
-      "id": "default-content",
-      "models": [
-        {
-          "id": "title",
-          "fields": [
-            {
-              "component": "text",
-              "name": "text",
-              "label": "Title Text",
-              "valueType": "string"
-            },
-            {
-              "component": "select",
-              "name": "type",
-              "label": "Heading Level",
-              "valueType": "string",
-              "options": [
-                { "name": "H1", "value": "h1" },
-                { "name": "H2", "value": "h2" },
-                { "name": "H3", "value": "h3" },
-                { "name": "H4", "value": "h4" },
-                { "name": "H5", "value": "h5" },
-                { "name": "H6", "value": "h6" }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "image",
-          "fields": [
-            {
-              "component": "reference",
-              "valueType": "string",
-              "name": "image",
-              "label": "Image",
-              "multi": false
-            },
-            {
-              "component": "text",
-              "name": "imageAlt",
-              "label": "Alt Text",
-              "valueType": "string"
-            }
-          ]
-        },
-        {
-          "id": "button",
-          "fields": [
-            {
-              "component": "text",
-              "name": "label",
-              "label": "Button Label",
-              "valueType": "string"
-            },
-            {
-              "component": "text",
-              "name": "href",
-              "label": "Link URL",
-              "valueType": "string"
-            },
-            {
-              "component": "select",
-              "name": "type",
-              "label": "Button Type",
-              "valueType": "string",
-              "options": [
-                { "name": "Primary", "value": "primary" },
-                { "name": "Secondary", "value": "secondary" }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "title": "Section",
-      "id": "section",
-      "models": [
-        {
-          "id": "section",
-          "fields": [
-            {
-              "component": "text",
-              "name": "style",
-              "label": "Section Style",
-              "valueType": "string",
-              "description": "Add a custom style class to the section (e.g., highlight, dark)"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "title": "Form",
-      "id": "form",
-      "models": [
-        {
-          "id": "form",
-          "fields": [
-            {
-              "component": "text",
-              "name": "style",
-              "label": "Form Specific styles path",
-              "valueType": "string"
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
+[
+  {
+    "id": "hero",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Background Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Image Alt Text"
+      },
+      {
+        "component": "richtext",
+        "name": "text",
+        "label": "Heading Text",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "cards",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Card Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Image Alt Text"
+      },
+      {
+        "component": "richtext",
+        "name": "text",
+        "label": "Card Body",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "columns",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "column1",
+        "label": "Column 1",
+        "valueType": "string"
+      },
+      {
+        "component": "richtext",
+        "name": "column2",
+        "label": "Column 2",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "carousel",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Slide Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Image Alt Text"
+      },
+      {
+        "component": "richtext",
+        "name": "text",
+        "label": "Slide Text",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "tabs",
+    "fields": [
+      {
+        "component": "text",
+        "name": "label",
+        "label": "Tab Label",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "teaser",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Teaser Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Image Alt Text"
+      },
+      {
+        "component": "richtext",
+        "name": "text",
+        "label": "Teaser Text",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "blockquote",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "quote",
+        "label": "Quote Text",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "name": "author",
+        "label": "Author Name",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "activity-details",
+    "fields": [
+      {
+        "component": "text",
+        "name": "label",
+        "label": "Label",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "name": "value",
+        "label": "Value",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "featured-article",
+    "fields": [
+      {
+        "component": "aem-content",
+        "name": "reference",
+        "label": "Article Page",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "fragment",
+    "fields": [
+      {
+        "component": "aem-content",
+        "name": "reference",
+        "label": "Fragment Path",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "title": "Default Content",
+    "id": "default-content",
+    "models": [
+      {
+        "id": "title",
+        "fields": [
+          {
+            "component": "text",
+            "name": "text",
+            "label": "Title Text",
+            "valueType": "string"
+          },
+          {
+            "component": "select",
+            "name": "type",
+            "label": "Heading Level",
+            "valueType": "string",
+            "options": [
+              {
+                "name": "H1",
+                "value": "h1"
+              },
+              {
+                "name": "H2",
+                "value": "h2"
+              },
+              {
+                "name": "H3",
+                "value": "h3"
+              },
+              {
+                "name": "H4",
+                "value": "h4"
+              },
+              {
+                "name": "H5",
+                "value": "h5"
+              },
+              {
+                "name": "H6",
+                "value": "h6"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "image",
+        "fields": [
+          {
+            "component": "reference",
+            "valueType": "string",
+            "name": "image",
+            "label": "Image",
+            "multi": false
+          },
+          {
+            "component": "text",
+            "name": "imageAlt",
+            "label": "Alt Text",
+            "valueType": "string"
+          }
+        ]
+      },
+      {
+        "id": "button",
+        "fields": [
+          {
+            "component": "text",
+            "name": "label",
+            "label": "Button Label",
+            "valueType": "string"
+          },
+          {
+            "component": "text",
+            "name": "href",
+            "label": "Link URL",
+            "valueType": "string"
+          },
+          {
+            "component": "select",
+            "name": "type",
+            "label": "Button Type",
+            "valueType": "string",
+            "options": [
+              {
+                "name": "Primary",
+                "value": "primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "secondary"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Section",
+    "id": "section",
+    "models": [
+      {
+        "id": "section",
+        "fields": [
+          {
+            "component": "text",
+            "name": "style",
+            "label": "Section Style",
+            "valueType": "string",
+            "description": "Add a custom style class to the section (e.g., highlight, dark)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Form",
+    "id": "form",
+    "models": [
+      {
+        "id": "form",
+        "fields": [
+          {
+            "component": "text",
+            "name": "style",
+            "label": "Form Specific styles path",
+            "valueType": "string"
+          }
+        ]
+      }
+    ]
+  }
+]
