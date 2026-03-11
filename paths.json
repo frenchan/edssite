@@ -1,0 +1,7 @@
+{
+  "/**": {
+    "component-definition": "/component-definition.json",
+    "component-models": "/component-models.json",
+    "component-filters": "/component-filters.json"
+  }
+}
