@@ -1,4 +1,11 @@
 {
+  "mappings": [
+    "/content/edssite/:/",
+    "/content/edssite/configuration:/.helix/config.json"
+  ],
+  "includes": [
+    "/content/edssite/"
+  ],
   "/**": {
     "component-definition": "/component-definition.json",
     "component-models": "/component-models.json",
