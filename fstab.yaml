@@ -1,2 +1,4 @@
 mountpoints:
-  /: https://da.live/frenchan/edssite
+  /:
+    url: https://content.da.live/frenchan/edssite/
+    type: markup
