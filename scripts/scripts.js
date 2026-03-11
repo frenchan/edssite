@@ -137,8 +137,12 @@ async function loadPage() {
 
 loadPage();
 
-(async function loadDa() {
+(function loadDa() {
   if (!new URL(window.location.href).searchParams.get('dapreview')) return;
-  // eslint-disable-next-line import/no-unresolved
-  import('https://da.live/scripts/dapreview.js').then(({ default: daPreview }) => daPreview(loadPage));
+  // Use inline module script to avoid CORS credentials issue with dynamic import()
+  window.daLoadPage = loadPage;
+  const mod = document.createElement('script');
+  mod.type = 'module';
+  mod.textContent = "import daPreview from 'https://da.live/scripts/dapreview.js'; daPreview(window.daLoadPage); delete window.daLoadPage;";
+  document.head.appendChild(mod);
 }());
