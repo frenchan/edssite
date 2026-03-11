@@ -285,7 +285,15 @@
       "id": "form",
       "models": [
         {
-          "...": "./blocks/form/_form.json#/models"
+          "id": "form",
+          "fields": [
+            {
+              "component": "text",
+              "name": "style",
+              "label": "Form Specific styles path",
+              "valueType": "string"
+            }
+          ]
         }
       ]
     }

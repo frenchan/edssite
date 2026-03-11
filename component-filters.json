@@ -56,7 +56,10 @@
       ]
     },
     {
-      "...": "./blocks/form/_form.json#/filters"
+      "id": "form",
+      "components": [
+        "form"
+      ]
     }
   ]
 }
