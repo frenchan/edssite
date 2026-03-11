@@ -9,7 +9,7 @@
         "preview"
       ],
       "includePaths": [
-        "**.docx**"
+        "**"
       ],
       "event": "aem-genai-variations-sidekick"
     },
