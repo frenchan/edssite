@@ -1,0 +1,62 @@
+{
+  "filters": [
+    {
+      "id": "section",
+      "components": [
+        "hero",
+        "cards",
+        "columns",
+        "carousel",
+        "tabs",
+        "teaser",
+        "blockquote",
+        "activity-details",
+        "featured-article",
+        "fragment",
+        "form",
+        "title",
+        "image",
+        "button"
+      ]
+    },
+    {
+      "id": "cards",
+      "components": [
+        "cards"
+      ]
+    },
+    {
+      "id": "columns",
+      "components": [
+        "columns"
+      ]
+    },
+    {
+      "id": "carousel",
+      "components": [
+        "carousel"
+      ]
+    },
+    {
+      "id": "tabs",
+      "components": [
+        "hero",
+        "cards",
+        "columns",
+        "carousel",
+        "teaser",
+        "blockquote",
+        "activity-details",
+        "featured-article",
+        "fragment",
+        "form",
+        "title",
+        "image",
+        "button"
+      ]
+    },
+    {
+      "...": "./blocks/form/_form.json#/filters"
+    }
+  ]
+}
