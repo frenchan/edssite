@@ -1,6 +1,8 @@
 import { createOptimizedPicture, loadCSS } from '../../scripts/aem.js';
 import transferRepeatableDOM, { insertAddButton, insertRemoveButton } from './components/repeat/repeat.js';
-import { emailPattern, getSubmitBaseUrl, SUBMISSION_SERVICE } from './constant.js';
+import {
+  emailPattern, getSubmitBaseUrl, SUBMISSION_SERVICE,
+} from './constant.js';
 import GoogleReCaptcha from './integrations/recaptcha.js';
 import componentDecorator from './mappings.js';
 import { handleSubmit } from './submit.js';
@@ -436,7 +438,15 @@ export async function fetchForm(pathname) {
     if (path.endsWith('.html')) {
       path = path.substring(0, path.lastIndexOf('.html'));
     }
-    path += '/jcr:content/root/section/form.html';
+    // Route AEM form paths through the AEM publish instance
+    const submitBaseUrl = getSubmitBaseUrl();
+    const url = new URL(path);
+    if (submitBaseUrl && url.pathname.startsWith('/forms/')) {
+      const aemFormPath = url.pathname.replace(/^\/forms\//, '/content/forms/af/');
+      path = `${submitBaseUrl}${aemFormPath}/jcr:content/root/section/form.html`;
+    } else {
+      path += '/jcr:content/root/section/form.html';
+    }
   }
   let resp = await fetch(path);
 
