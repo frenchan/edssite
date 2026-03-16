@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AEM Assets</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 12px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e0e0e0;
+      border-top-color: #1473e6;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 12px;
+      padding: 24px;
+      text-align: center;
+      color: #555;
+    }
+
+    .error h3 { color: #333; font-size: 16px; }
+    .error p { font-size: 13px; line-height: 1.5; }
+
+    .error button {
+      margin-top: 8px;
+      padding: 8px 16px;
+      background: #1473e6;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .error button:hover { background: #0d66d0; }
+
+    .asset-selector-container {
+      display: none;
+      height: 100%;
+      width: 100%;
+    }
+
+    .inserted-toast {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #268e6c;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 13px;
+      transition: transform 0.3s ease;
+      z-index: 9999;
+    }
+
+    .inserted-toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span>Loading AEM Assets...</span>
+  </div>
+
+  <div class="error" id="error">
+    <h3>Authentication Required</h3>
+    <p>Sign in with your Adobe account to browse AEM Assets.</p>
+    <button id="signin-btn">Sign In</button>
+  </div>
+
+  <div class="asset-selector-container" id="asset-selector-container"></div>
+  <div class="inserted-toast" id="toast">Asset inserted</div>
+
+  <script>
+    (() => {
+      // DA plugin communication port
+      let port;
+
+      // IMS configuration
+      const IMS_ENV = 'prod';
+      const IMS_CLIENT_ID = 'p66302-DocumentAuthoring';
+      const REPO_NAME = 'delivery-p88906-e783463.adobeaemcloud.com';
+
+      // Listen for DA MessageChannel port
+      window.addEventListener('message', (event) => {
+        if (event.ports?.[0]) {
+          port = event.ports[0];
+        }
+      });
+
+      function sendToDA(html) {
+        if (!port) return;
+        port.postMessage({ action: 'sendHTML', details: html });
+        showToast();
+      }
+
+      function showToast() {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+      }
+
+      function buildImageHTML(asset) {
+        const deliveryUrl = asset.url || asset['repo:path'] || '';
+        const name = asset.name || asset['repo:name'] || 'image';
+        const alt = name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+
+        // Build a picture element for EDS
+        return `<p><picture><img src="${deliveryUrl}" alt="${alt}"></picture></p>`;
+      }
+
+      function handleSelection(selection) {
+        if (!selection || selection.length === 0) return;
+
+        const htmlParts = selection.map((asset) => buildImageHTML(asset));
+        sendToDA(htmlParts.join(''));
+      }
+
+      async function initIMS() {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://auth.services.adobe.com/imslib/imslib.min.js';
+          script.onload = () => {
+            window.adobeIMS = new window.AdobeIMSLib.AdobeIMS({
+              client_id: IMS_CLIENT_ID,
+              scope: 'AdobeID,openid,additional_info.projectedProductContext',
+              environment: IMS_ENV,
+              loggingEnabled: false,
+              modalMode: true,
+              onReady: () => resolve(),
+              onError: (type, msg) => reject(new Error(`${type}: ${msg}`)),
+            });
+            window.adobeIMS.initialize();
+          };
+          script.onerror = () => reject(new Error('Failed to load IMS library'));
+          document.head.appendChild(script);
+        });
+      }
+
+      async function getToken() {
+        if (!window.adobeIMS?.isSignedInUser()) {
+          return null;
+        }
+        const tokenInfo = window.adobeIMS.getAccessToken();
+        return tokenInfo?.token || null;
+      }
+
+      function showSignIn() {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'flex';
+        document.getElementById('signin-btn').addEventListener('click', () => {
+          window.adobeIMS.signIn();
+        });
+
+        // Listen for sign-in completion
+        const originalOnAccessToken = window.adobeIMS.onAccessToken;
+        window.adobeIMS.onAccessToken = (token) => {
+          if (originalOnAccessToken) originalOnAccessToken(token);
+          document.getElementById('error').style.display = 'none';
+          document.getElementById('loading').style.display = 'flex';
+          loadAssetSelector();
+        };
+      }
+
+      async function loadAssetSelector() {
+        const token = await getToken();
+        if (!token) {
+          showSignIn();
+          return;
+        }
+
+        // Load Asset Selector from Experience Cloud
+        const script = document.createElement('script');
+        script.src = 'https://experience.adobe.com/solutions/CQ-assets-selectors/static-assets/resources/assets-selectors.js';
+        script.onload = () => {
+          renderAssetSelector(token);
+        };
+        script.onerror = () => {
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('error').querySelector('h3').textContent = 'Failed to Load';
+          document.getElementById('error').querySelector('p').textContent = 'Could not load the Asset Selector. Please try again.';
+          document.getElementById('error').style.display = 'flex';
+        };
+        document.head.appendChild(script);
+      }
+
+      function renderAssetSelector(token) {
+        const container = document.getElementById('asset-selector-container');
+        document.getElementById('loading').style.display = 'none';
+        container.style.display = 'block';
+
+        // Use the PureJSSelectors API from the Asset Selector SDK
+        const assetSelectorProps = {
+          imsToken: token,
+          repositoryId: REPO_NAME,
+          env: IMS_ENV === 'stage' ? 'stage' : 'prod',
+          onClose: () => {},
+          handleSelection,
+          handleAssetSelection: (assets) => {
+            // Called when assets are selected (multi-select mode)
+            if (assets?.length > 0) {
+              handleSelection(assets);
+            }
+          },
+          rail: false,
+          acvConfig: {
+            selectionType: 'single',
+          },
+          hideTreeNav: true,
+        };
+
+        try {
+          // Render using the Asset Selector API
+          const selectorApi = window.PureJSSelectors || window.AssetSelectors;
+          if (selectorApi?.renderAssetSelector) {
+            selectorApi.renderAssetSelector(container, assetSelectorProps);
+          } else if (selectorApi?.renderAssetSelectorWithAuthFlow) {
+            selectorApi.renderAssetSelectorWithAuthFlow(container, assetSelectorProps);
+          } else {
+            // Fallback: try direct render
+            container.innerHTML = '';
+            const selectorEl = document.createElement('asset-selector');
+            Object.entries(assetSelectorProps).forEach(([key, value]) => {
+              if (typeof value === 'string') selectorEl.setAttribute(key, value);
+            });
+            container.appendChild(selectorEl);
+          }
+        } catch (err) {
+          console.error('Asset Selector render error:', err);
+          container.innerHTML = `<div class="error" style="display:flex"><h3>Render Error</h3><p>${err.message}</p></div>`;
+        }
+      }
+
+      // Initialize
+      async function init() {
+        try {
+          await initIMS();
+          await loadAssetSelector();
+        } catch (err) {
+          console.error('Init error:', err);
+          showSignIn();
+        }
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
