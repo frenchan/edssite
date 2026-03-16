@@ -432,20 +432,19 @@
       function initIMS() {
         return new Promise((resolve, reject) => {
           if (window.adobeIMS) { resolve(); return; }
-          const script = document.createElement('script');
-          script.src = 'https://auth.services.adobe.com/imslib/imslib.min.js';
-          script.onload = () => {
-            window.adobeIMS = new window.AdobeIMSLib.AdobeIMS({
+          window.adobeid = {
               client_id: 'p66302-DocumentAuthoring',
               scope: 'AdobeID,openid',
+              locale: 'en_US',
               environment: 'prod',
-              loggingEnabled: false,
+              loggingEnabled: true,
+              useLocalStorage: false,
               modalMode: true,
               onReady: () => resolve(),
               onError: (type, msg) => reject(new Error(`${type}: ${msg}`)),
-            });
-            window.adobeIMS.initialize();
           };
+          const script = document.createElement('script');
+          script.src = 'https://auth.services.adobe.com/imslib/imslib.min.js';
           script.onerror = () => reject(new Error('Failed to load IMS'));
           document.head.appendChild(script);
         });
