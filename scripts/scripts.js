@@ -13,6 +13,8 @@ import {
   loadCSS,
 } from './aem.js';
 
+import assetsInit from './aem-assets-plugin-support.js';
+
 /**
  * Builds hero block and prepends to main in a new section.
  * @param {Element} main The container element
@@ -59,6 +61,10 @@ function buildAutoBlocks(main) {
  */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
+  // Let the plugin convert DM URLs into <picture>/<img> before other decorations
+  if (window.hlx.aemassets?.decorateExternalImages) {
+    window.hlx.aemassets.decorateExternalImages(main);
+  }
   // hopefully forward compatible button decoration
   decorateButtons(main);
   decorateIcons(main);
@@ -123,6 +129,7 @@ function loadDelayed() {
 }
 
 async function loadPage() {
+  await assetsInit();
   await loadEager(document);
   await loadLazy(document);
   loadDelayed();
