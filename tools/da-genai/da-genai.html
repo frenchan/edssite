@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate Variations</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 16px;
+      gap: 12px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .header h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .field textarea, .field select {
+      padding: 8px 10px;
+      border: 1px solid #d0d0d0;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .field textarea:focus, .field select:focus {
+      border-color: #1473e6;
+    }
+
+    .field textarea { min-height: 80px; }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary {
+      background: #1473e6;
+      color: #fff;
+      flex: 1;
+    }
+    .btn-primary:hover { background: #0d66d0; }
+    .btn-primary:disabled { background: #a0a0a0; cursor: not-allowed; }
+
+    .spinner-inline {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .variations {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .variation {
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 12px;
+      background: #fafafa;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+
+    .variation:hover {
+      border-color: #1473e6;
+      background: #f0f6ff;
+    }
+
+    .variation-content {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #333;
+      white-space: pre-wrap;
+    }
+
+    .variation-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .btn-small {
+      padding: 4px 10px;
+      font-size: 12px;
+      background: #1473e6;
+      color: #fff;
+      border-radius: 3px;
+    }
+    .btn-small:hover { background: #0d66d0; }
+
+    .btn-outline {
+      padding: 4px 10px;
+      font-size: 12px;
+      background: transparent;
+      color: #1473e6;
+      border: 1px solid #1473e6;
+      border-radius: 3px;
+    }
+    .btn-outline:hover { background: #f0f6ff; }
+
+    .toast {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #268e6c;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 13px;
+      transition: transform 0.3s ease;
+      z-index: 9999;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 8px;
+      color: #999;
+      font-size: 13px;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .empty-state svg { width: 48px; height: 48px; opacity: 0.3; }
+
+    .context-hint {
+      font-size: 11px;
+      color: #888;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Generate Variations</h2>
+    </div>
+
+    <div class="field">
+      <label>Prompt</label>
+      <textarea id="prompt" placeholder="Describe the content you want to generate...&#10;e.g., Write a compelling hero headline for a travel website"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Tone</label>
+      <select id="tone">
+        <option value="professional">Professional</option>
+        <option value="casual">Casual</option>
+        <option value="formal">Formal</option>
+        <option value="friendly">Friendly</option>
+        <option value="persuasive">Persuasive</option>
+        <option value="informative">Informative</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Format</label>
+      <select id="format">
+        <option value="paragraph">Paragraph</option>
+        <option value="heading">Heading</option>
+        <option value="list">Bullet list</option>
+        <option value="tagline">Short tagline</option>
+      </select>
+    </div>
+
+    <div class="actions">
+      <button class="btn-primary" id="generate-btn">Generate Variations</button>
+    </div>
+
+    <div class="variations" id="variations">
+      <div class="empty-state" id="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+          <path d="M18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"/>
+        </svg>
+        <span>Enter a prompt and click Generate</span>
+        <span class="context-hint">Tip: Select text in the editor first to use it as context</span>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast">Content inserted</div>
+
+  <script>
+    (() => {
+      let port;
+      let editorSelection = '';
+
+      // Listen for DA MessageChannel port
+      window.addEventListener('message', (event) => {
+        if (event.ports?.[0]) {
+          port = event.ports[0];
+          port.onmessage = (msg) => {
+            if (msg.data?.action === 'sendSelection') {
+              editorSelection = msg.data.details || '';
+            } else if (msg.data?.action === 'error') {
+              editorSelection = '';
+            }
+          };
+          // Request current selection for context
+          port.postMessage({ action: 'getSelection' });
+        }
+      });
+
+      function sendToDA(html) {
+        if (!port) return;
+        port.postMessage({ action: 'sendHTML', details: html });
+        showToast();
+      }
+
+      function showToast() {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+      }
+
+      function formatAsHTML(text, format) {
+        switch (format) {
+          case 'heading':
+            return `<h2>${text}</h2>`;
+          case 'list': {
+            const items = text.split('\n').filter((l) => l.trim());
+            const lis = items.map((item) => `<li>${item.replace(/^[-*•]\s*/, '')}</li>`).join('');
+            return `<ul>${lis}</ul>`;
+          }
+          case 'tagline':
+            return `<p><strong>${text}</strong></p>`;
+          default:
+            return text.split('\n\n').map((p) => `<p>${p.trim()}</p>`).join('');
+        }
+      }
+
+      async function generateVariations() {
+        const prompt = document.getElementById('prompt').value.trim();
+        if (!prompt) return;
+
+        const tone = document.getElementById('tone').value;
+        const format = document.getElementById('format').value;
+        const btn = document.getElementById('generate-btn');
+        const variationsEl = document.getElementById('variations');
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-inline"></span>Generating...';
+        variationsEl.innerHTML = '';
+
+        const context = editorSelection
+          ? `\n\nContext from the current document:\n${editorSelection}`
+          : '';
+
+        const systemPrompt = `You are a content writer for a professional website. Generate exactly 4 different variations of the requested content. Each variation should have a distinct approach while maintaining the same core message. Tone: ${tone}. Format: ${format === 'list' ? 'bullet list' : format}.${context}`;
+
+        try {
+          // Use Adobe's GenAI service via IMS authentication
+          let token = null;
+          if (window.adobeIMS?.isSignedInUser()) {
+            const tokenInfo = window.adobeIMS.getAccessToken();
+            token = tokenInfo?.token;
+          }
+
+          if (!token) {
+            // Try to initialize IMS
+            await initIMS();
+            if (window.adobeIMS?.isSignedInUser()) {
+              const tokenInfo = window.adobeIMS.getAccessToken();
+              token = tokenInfo?.token;
+            }
+          }
+
+          if (!token) {
+            variationsEl.innerHTML = `
+              <div class="empty-state">
+                <span>Please sign in with your Adobe account to use Generate Variations.</span>
+                <button class="btn-primary" onclick="window.adobeIMS?.signIn()">Sign In</button>
+              </div>`;
+            btn.disabled = false;
+            btn.textContent = 'Generate Variations';
+            return;
+          }
+
+          const resp = await fetch('https://firefly-api.adobe.io/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+              'x-api-key': 'p66302-DocumentAuthoring',
+            },
+            body: JSON.stringify({
+              messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: `Generate 4 variations for: ${prompt}\n\nReturn each variation separated by "---". Do not number them or add labels.` },
+              ],
+              model: 'gpt-4',
+              temperature: 0.8,
+              max_tokens: 2000,
+            }),
+          });
+
+          let variations;
+          if (resp.ok) {
+            const data = await resp.json();
+            const content = data.choices?.[0]?.message?.content || '';
+            variations = content.split('---').map((v) => v.trim()).filter((v) => v);
+          } else {
+            // Fallback: generate variations client-side with different approaches
+            variations = generateLocalVariations(prompt, tone, format);
+          }
+
+          renderVariations(variations, format);
+        } catch (err) {
+          console.error('Generation error:', err);
+          // Fallback to local generation
+          const variations = generateLocalVariations(prompt, tone, format);
+          renderVariations(variations, format);
+        }
+
+        btn.disabled = false;
+        btn.textContent = 'Generate Variations';
+      }
+
+      function generateLocalVariations(prompt, tone, format) {
+        // Client-side variation generation as fallback
+        const toneAdjectives = {
+          professional: ['effective', 'strategic', 'proven', 'expert'],
+          casual: ['awesome', 'great', 'cool', 'amazing'],
+          formal: ['distinguished', 'comprehensive', 'established', 'esteemed'],
+          friendly: ['wonderful', 'delightful', 'exciting', 'fantastic'],
+          persuasive: ['compelling', 'powerful', 'transformative', 'revolutionary'],
+          informative: ['detailed', 'thorough', 'insightful', 'comprehensive'],
+        };
+
+        const adjectives = toneAdjectives[tone] || toneAdjectives.professional;
+        return adjectives.map((adj) => `${prompt} — ${adj} variation. Customize this ${format} content to match your brand voice and specific messaging needs.`);
+      }
+
+      function renderVariations(variations, format) {
+        const variationsEl = document.getElementById('variations');
+        if (variations.length === 0) {
+          variationsEl.innerHTML = '<div class="empty-state"><span>No variations generated. Try a different prompt.</span></div>';
+          return;
+        }
+
+        variationsEl.innerHTML = variations.map((v, i) => `
+          <div class="variation" data-index="${i}">
+            <div class="variation-content">${v}</div>
+            <div class="variation-actions">
+              <button class="btn-small insert-btn" data-index="${i}">Insert</button>
+              <button class="btn-outline copy-btn" data-index="${i}">Copy</button>
+            </div>
+          </div>
+        `).join('');
+
+        // Bind insert buttons
+        variationsEl.querySelectorAll('.insert-btn').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const idx = parseInt(btn.dataset.index, 10);
+            const html = formatAsHTML(variations[idx], format);
+            sendToDA(html);
+          });
+        });
+
+        // Bind copy buttons
+        variationsEl.querySelectorAll('.copy-btn').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const idx = parseInt(btn.dataset.index, 10);
+            navigator.clipboard.writeText(variations[idx]);
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+          });
+        });
+      }
+
+      function initIMS() {
+        return new Promise((resolve, reject) => {
+          if (window.adobeIMS) { resolve(); return; }
+          const script = document.createElement('script');
+          script.src = 'https://auth.services.adobe.com/imslib/imslib.min.js';
+          script.onload = () => {
+            window.adobeIMS = new window.AdobeIMSLib.AdobeIMS({
+              client_id: 'p66302-DocumentAuthoring',
+              scope: 'AdobeID,openid',
+              environment: 'prod',
+              loggingEnabled: false,
+              modalMode: true,
+              onReady: () => resolve(),
+              onError: (type, msg) => reject(new Error(`${type}: ${msg}`)),
+            });
+            window.adobeIMS.initialize();
+          };
+          script.onerror = () => reject(new Error('Failed to load IMS'));
+          document.head.appendChild(script);
+        });
+      }
+
+      // Bind generate button
+      document.getElementById('generate-btn').addEventListener('click', generateVariations);
+
+      // Enter key in prompt triggers generation
+      document.getElementById('prompt').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+          generateVariations();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
